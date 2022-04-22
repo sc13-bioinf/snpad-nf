@@ -1,0 +1,36 @@
+FROM ubuntu:focal
+RUN apt-get update && apt-get install -y \
+	build-essential \
+	locales
+RUN locale-gen en_US.UTF-8
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
+RUN apt-get install -y \
+	software-properties-common \
+	dirmngr \
+	zlib1g-dev \
+	libbz2-dev \
+	pkg-config \
+	python3 \
+	python3-pip \
+	python3-setuptools \
+	unzip \
+	tabix \
+	libncurses5-dev \
+	libbz2-dev \
+	liblzma-dev \
+	libnlopt-cxx-dev \
+	libpopt-dev \
+	git \
+	cmake \
+	sudo
+WORKDIR /opt/resources
+RUN echo "Done"
+WORKDIR /projects1/tools/snpad/0.3.9
+COPY resources/r-40-default/marutter_pubkey.asc .
+RUN cat marutter_pubkey.asc | sudo tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc
+RUN add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/"
+RUN apt-get install -y \
+	r-mathlib
+COPY resources/snpad/snpAD-0.3.9.tar.gz .
+RUN tar -xzf snpAD-0.3.9.tar.gz && cd snpAD-0.3.9 && make PREFIX=/projects1/tools/snpad/0.3.9 install
+ENV PATH="/projects1/tools/snpad/0.3.9/bin:${PATH}"
