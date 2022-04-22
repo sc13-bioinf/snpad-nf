@@ -228,7 +228,7 @@ workflow {
 	main:
 		design_path = null
 
-		if (params.prior_chromosomes == null) exit 1, "Please supply the chromosome to use for calculating priors (--prior_chromosomes)"
+		if (params.prior_chromosomes == null) println "Using all chromosomes for calculating priors, you can speed this up by using a subset (--prior_chromosomes)"
 		if (params.input && file_has_extension (params.input, "tsv")) design_path = params.input else exit 1, "Please supply design file (--input)"
 		ch_input = extract_data (design_path)
 		ch_data = ch_input.map { [it, file (it["bam"],glob: false) ] }.dump (tag: 'ch_data')
